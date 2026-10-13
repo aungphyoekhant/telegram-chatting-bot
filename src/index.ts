@@ -1,10 +1,12 @@
 import "dotenv/config";
 import { Bot, type Context } from "grammy";
+import express from "express";
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN?.trim();
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY?.trim();
 const OPENROUTER_MODEL =
   process.env.OPENROUTER_MODEL?.trim() || "google/gemma-4-26b-a4b-it:free";
+const PORT = process.env.PORT || 3000;
 
 if (!TELEGRAM_BOT_TOKEN) {
   throw new Error("TELEGRAM_BOT_TOKEN is missing from .env");
@@ -15,6 +17,18 @@ if (!OPENROUTER_API_KEY) {
 }
 
 const bot = new Bot(TELEGRAM_BOT_TOKEN);
+
+// --- Express Keep-Alive Server (Render Free tier အတွက် လိုအပ်သည်) ---
+const app = express();
+
+app.get("/", (req, res) => {
+  res.send("🤖 Telegram AI Bot is alive and running!");
+});
+
+app.listen(Number(PORT), "0.0.0.0", () => {
+  console.log(`🌐 Express server is listening on port ${PORT}`);
+});
+// -----------------------------------------------------------------
 
 // Keep recent conversation history separately for each Telegram chat.
 const conversations = new Map<
@@ -220,4 +234,3 @@ bot.start({
     console.log(`🤖 Model: ${OPENROUTER_MODEL}`);
   },
 });
-
