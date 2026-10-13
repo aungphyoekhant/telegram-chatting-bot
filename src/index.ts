@@ -172,6 +172,9 @@ bot.command("help", async (ctx: Context) => {
 });
 
 bot.command("reset", async (ctx: Context) => {
+  // Fix: Check if ctx.chat exists
+  if (!ctx.chat) return;
+
   conversations.delete(ctx.chat.id);
 
   await ctx.reply(
@@ -181,6 +184,9 @@ bot.command("reset", async (ctx: Context) => {
 
 // Handle ordinary text messages.
 bot.on("message:text", async (ctx) => {
+  // Fix: Check if ctx.chat exists
+  if (!ctx.chat) return;
+
   const userMessage = ctx.message.text.trim();
 
   if (!userMessage || userMessage.startsWith("/")) {
@@ -220,4 +226,3 @@ bot.start({
     console.log(`🤖 Model: ${OPENROUTER_MODEL}`);
   },
 });
-
